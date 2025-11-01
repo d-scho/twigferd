@@ -6,12 +6,15 @@ namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Twig\Environment;
 
 final readonly class IndexController
 {
     #[Route('/', methods: ['GET'])]
-    public function __invoke(): Response
+    public function __invoke(Environment $twig): Response
     {
-        return new Response('foo');
+        $html = $twig->render('index.html.twig');
+
+        return new Response($html);
     }
 }
