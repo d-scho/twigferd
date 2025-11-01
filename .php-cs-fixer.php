@@ -1,7 +1,7 @@
 <?php
 
-use PhpCsFixer\Finder;
 use PhpCsFixer\Config;
+use PhpCsFixer\Finder;
 
 $finder = new Finder()
     ->in([
