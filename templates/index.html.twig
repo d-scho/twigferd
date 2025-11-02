@@ -1,1 +1,121 @@
-bar
+<style>
+    /*
+        at 96 DPI, 1 inch = 96 px = 25.4 mm
+        A4 portrait width = 210mm = 8,267... inches
+        inches * 96 = 793,7...
+    */
+    @page {
+        margin: 1in 1in 0.8in 1in; /* ~= right top left 25mm, bottom 20mm = MS Word default, has to be defined here or it doesn't translate to further pages */
+    }
+
+    /* set width to have reliable preview */
+    html {
+        width: 793px;
+    }
+
+    /* prevent resets from overwriting page with :not(html) */
+    *:not(html) {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        border: 1px solid red;
+    }
+</style>
+
+<table style="width:100%; border-collapse:collapse; margin-bottom: 40px;">
+    <tr>
+        <td style="vertical-align:top; padding-top: 200px;">
+            <table style="border-collapse:collapse;">
+                {% for line in recipientAddress %}
+                    <tr>
+                        <td>{{ line }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </td>
+        <td style="vertical-align:top; width: 0; white-space: nowrap;">
+            <table style="border-collapse:collapse;" align="right">
+                {% if senderLogoBase64 is not empty %}
+                    <tr>
+                        <td style="text-align: center;">
+                            <img src="data:image/png;base64, {{ senderLogoBase64 }}" alt="Logo" style="width: 100px;" />
+                        </td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td align="center">
+                        <table style="border-collapse: collapse;">
+                            {% for line in senderAddress %}
+                                <tr>
+                                    <td style="vertical-align:top; width: 0; white-space: nowrap;">{{ line }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+{% if documentIdentifiers is not empty or documentDates is not empty %}
+    <table style="width:100%; border-collapse:collapse; margin-bottom: 40px;">
+        <tr>
+            <td style="vertical-align:top;">
+                <table style="border-collapse:collapse;">
+                    {% for key, value in documentIdentifiers %}
+                        <tr>
+                            <td style="width: 0; white-space: nowrap;">{{ key }}:&nbsp;</td>
+                            <td>{{ value }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </td>
+            <td style="vertical-align:top; width: 0;">
+                <table style="border-collapse:collapse;">
+                    {% for key, value in documentDates %}
+                        <tr>
+                            <td style="width: 0; white-space: nowrap; text-align: right;">{{ key }}:&nbsp;</td>
+                            <td style="width: 0; white-space: nowrap; text-align: right;">{{ value|date("d.m.Y") }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </td>
+        </tr>
+    </table>
+{% endif %}
+
+{% if title is not empty %}
+<div style="font-size: 14pt; font-weight: bold; margin-bottom: 20px;">
+    {{ title }}
+</div>
+{% endif %}
+
+{% if leadInText is not empty %}
+    <div style="margin-bottom: 20px;">
+        {{ leadInText }}
+    </div>
+{% endif %}
+
+<table style="width: 100%; border-collapse: collapse;{% if leadOutText is not empty %} margin-bottom: 20px;{% endif %}">
+    <tr>
+        <th style="border: 1px solid black; padding: 4px 8px">#</th>
+        {% for heading in itemHeadings %}
+            <th style="border: 1px solid black; padding: 4px 8px">{{ heading }}</th>
+        {% endfor %}
+    </tr>
+{% for item in items %}
+    <tr>
+        <td style="border: 1px solid black; padding: 4px 8px; text-align: center; width: 0;">{{ loop.index }}</td>
+        {% for column in item %}
+            <td style="border: 1px solid black; padding: 4px 8px;{% if loop.index != 1 %} width: 0; white-space: nowrap; text-align: center;{% endif %}">{{ column }}</td>
+        {% endfor %}
+    </tr>
+{% endfor %}
+</table>
+
+{% if leadOutText is not empty %}
+    <div>
+        {{ leadOutText }}
+    </div>
+{% endif %}
